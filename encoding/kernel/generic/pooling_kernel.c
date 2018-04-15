@@ -49,7 +49,7 @@ __global__ void Encoding_(DilatedAvgPool_Forward_kernel) (
             sum += X[b][c][th][tw];
         }
     }
-    Y[b][c][h][w] = sum / pool_size;
+    Y[b][c][h][w] = sum / (real)pool_size;
 }
 
 void Encoding_(DilatedAvgPool_Forward)(THCState *state, 
