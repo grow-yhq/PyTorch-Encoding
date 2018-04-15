@@ -13,7 +13,7 @@ import torch
 from torch.autograd import Function, Variable
 from .._ext import encoding_lib
 
-__all__ = ['sum_square', 'batchnormtrain', 'batchnormeval']
+__all__ = ['sum_square', 'sum_square_3d', 'batchnormtrain', 'batchnormeval']
 
 class _sum_square(Function):
     @staticmethod
@@ -30,6 +30,10 @@ class _sum_square(Function):
         elif isinstance(input, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(input):
                 encoding_lib.Encoding_Double_sum_square_Forward(
+                    input.view(B, C, -1), xsum, xsquare)
+        elif isinstance(input, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(input):
+                encoding_lib.Encoding_Half_sum_square_Forward(
                     input.view(B, C, -1), xsum, xsquare)
         else:
             raise RuntimeError('Unimplemented data type!')
@@ -49,6 +53,10 @@ class _sum_square(Function):
             with torch.cuda.device_of(input.data):
                 encoding_lib.Encoding_Double_sum_square_Backward(
                     gradInput, input.data.view(B, C, -1), gradSum, gradSquare)
+        elif isinstance(input.data, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(input.data):
+                encoding_lib.Encoding_Half_sum_square_Backward(
+                    gradInput, input.data.view(B, C, -1), gradSum, gradSquare)
         else:
             raise RuntimeError('Unimplemented data type!')
         return gradInput.view(B, C, H, W)
@@ -60,6 +68,58 @@ def sum_square(input):
     """
     return _sum_square.apply(input)
 
+class _sum_square_3d(Function):
+    @staticmethod
+    def forward(ctx, input):
+        ctx.save_for_backward(input)
+        B,C,H,W,L = input.size()
+        with torch.cuda.device_of(input):
+            xsum    = input.new().resize_(C).zero_()
+            xsquare = input.new().resize_(C).zero_()
+        if isinstance(input, torch.cuda.FloatTensor):
+            with torch.cuda.device_of(input):
+                encoding_lib.Encoding_Float_sum_square_Forward(
+                    input.view(B,C,-1), xsum, xsquare)
+        elif isinstance(input, torch.cuda.DoubleTensor):
+            with torch.cuda.device_of(input):
+                encoding_lib.Encoding_Double_sum_square_Forward(
+                    input.view(B,C,-1), xsum, xsquare)
+        elif isinstance(input, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(input):
+                encoding_lib.Encoding_Half_sum_square_Forward(
+                    input.view(B,C,-1), xsum, xsquare)
+        else:
+            raise RuntimeError('Unimplemented data type!')
+        return xsum, xsquare
+
+    @staticmethod
+    def backward(ctx, gradSum, gradSquare):
+        input, = ctx.saved_variables
+        B,C,H,W,L = input.data.size()
+        with torch.cuda.device_of(input.data):
+            gradInput = Variable(input.data.new().resize_(B,C,H*W*L).zero_())
+        if isinstance(input.data, torch.cuda.FloatTensor):
+            with torch.cuda.device_of(input.data):
+                encoding_lib.Encoding_Float_sum_square_Backward(
+                    gradInput, input.data.view(B,C,-1), gradSum, gradSquare)
+        elif isinstance(input.data, torch.cuda.DoubleTensor):
+            with torch.cuda.device_of(input.data):
+                encoding_lib.Encoding_Double_sum_square_Backward(
+                    gradInput, input.data.view(B,C,-1), gradSum, gradSquare)
+        elif isinstance(input.data, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(input.data):
+                encoding_lib.Encoding_Half_sum_square_Backward(
+                    gradInput, input.data.view(B,C,-1), gradSum, gradSquare)
+        else:
+            raise RuntimeError('Unimplemented data type!')
+        return gradInput.view(B,C,H,W,L)
+
+
+def sum_square_3d(input):
+    r"""
+    Calculate sum of elements and sum of squares for Batch Normalization.
+    """
+    return _sum_square_3d.apply(input)
 
 class _batchnorm(Function):
     def __init__(self, training=False):
@@ -79,6 +139,10 @@ class _batchnorm(Function):
         elif isinstance(input, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(input):
                 encoding_lib.Encoding_Double_batchnorm_Forward(output, \
+                    input, mean, invstd, gamma, beta)
+        elif isinstance(input, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(input):
+                encoding_lib.Encoding_Half_batchnorm_Forward(output, \
                     input, mean, invstd, gamma, beta)
         else:
             raise RuntimeError('Unimplemented data type!')
@@ -103,6 +167,12 @@ class _batchnorm(Function):
         elif isinstance(input, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(input):
                 encoding_lib.Encoding_Double_batchnorm_Backward(
+                    gradOutput, input, gradInput, gradGamma, gradBeta,
+                    mean, invstd, gamma, beta, gradMean, gradStd,
+                    self.training)
+        elif isinstance(input, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(input):
+                encoding_lib.Encoding_Half_batchnorm_Backward(
                     gradOutput, input, gradInput, gradGamma, gradBeta,
                     mean, invstd, gamma, beta, gradMean, gradStd,
                     self.training)

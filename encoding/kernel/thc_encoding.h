@@ -43,6 +43,16 @@ extern "C" {
 #include "generic/pooling_kernel.h"
 #include "THC/THCGenerateDoubleType.h"
 
+// half
+#include "generic/encoding_kernel.h"
+#include "THC/THCGenerateHalfType.h"
+
+#include "generic/syncbn_kernel.h"
+#include "THC/THCGenerateHalfType.h"
+
+#include "generic/pooling_kernel.h"
+#include "THC/THCGenerateHalfType.h"
+
 #ifdef __cplusplus
 }
 #endif

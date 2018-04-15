@@ -173,7 +173,7 @@ struct Encoding_(L2XBackOp) {
     ) : GSL(gsl), X(x), C(c), S(s) {}
     __device__ __forceinline__ real operator()(int b, int i, int k, int d) 
     {
-        return 2*S[k].ldg() * GSL[b][i][k].ldg() *
+        return (real)2*S[k].ldg() * GSL[b][i][k].ldg() *
             (X[b][i][d].ldg()-C[k][d].ldg());
     }
     THCDeviceTensor<real, 3> GSL;
@@ -228,7 +228,7 @@ struct Encoding_(L2CBackOp) {
     ) : GSL(gsl), X(x), C(c), S(s) {}
     __device__ __forceinline__ real operator()(int b, int i, int k, int d) 
     {
-        return -2*S[k].ldg() * GSL[b][i][k].ldg() *
+        return -(real)2*S[k].ldg() * GSL[b][i][k].ldg() *
                 (X[b][i][d].ldg()-C[k][d].ldg());
     }
     THCDeviceTensor<real, 3> GSL;

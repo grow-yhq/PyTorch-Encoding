@@ -30,6 +30,9 @@ class _aggregate(Function):
         elif isinstance(A, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(A):
                 encoding_lib.Encoding_Double_aggregate_forward(E, A, X, C)
+        elif isinstance(A, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(A):
+                encoding_lib.Encoding_Half_aggregate_forward(E, A, X, C)
         else:
             raise RuntimeError('Unimplemented data type!')
         return E
@@ -48,6 +51,10 @@ class _aggregate(Function):
         elif isinstance(A.data, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(A.data):
                 encoding_lib.Encoding_Double_aggregate_backward(gradA.data, \
+                    gradE.data, A.data, X.data, C.data)
+        elif isinstance(A.data, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(A.data):
+                encoding_lib.Encoding_Half_aggregate_backward(gradA.data, \
                     gradE.data, A.data, X.data, C.data)
         else:
             raise RuntimeError('Unimplemented data type!')
@@ -94,6 +101,9 @@ class _scaledL2(Function):
         elif isinstance(X, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(X):
                 encoding_lib.Encoding_Double_scaledl2_forward(SL, X, C, S)
+        elif isinstance(X, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(X):
+                encoding_lib.Encoding_Half_scaledl2_forward(SL, X, C, S)
         else:
             raise RuntimeError('Unimplemented data type!')
         ctx.save_for_backward(X, C, S, SL)
@@ -114,6 +124,10 @@ class _scaledL2(Function):
         elif isinstance(X.data, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(X.data):
                 encoding_lib.Encoding_Double_scaledl2_backward(gradSL.data, \
+                    gradX.data, gradC.data, X.data, C.data, S.data)
+        elif isinstance(X.data, torch.cuda.HalfTensor):
+            with torch.cuda.device_of(X.data):
+                encoding_lib.Encoding_Half_scaledl2_backward(gradSL.data, \
                     gradX.data, gradC.data, X.data, C.data, S.data)
         else:
             raise RuntimeError('Unimplemented data type!')
