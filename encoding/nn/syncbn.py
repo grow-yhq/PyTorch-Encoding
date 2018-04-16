@@ -15,11 +15,11 @@ from torch.nn import Module, Sequential, Conv1d, Conv2d, ConvTranspose2d, \
     ReLU, Sigmoid, MaxPool2d, AvgPool2d, AdaptiveAvgPool2d, Dropout2d, Linear
 from torch.nn.parameter import Parameter
 
-from ..functions import batchnormtrain, batchnormeval, sum_square, sum_square_3d
+from ..functions import batchnormtrain, batchnormeval, sum_square
 from ..parallel import allreduce
 
 # import standard layers for convinent use
-__all__ = ['BatchNorm1d', 'BatchNorm2d', 'BatchNorm3d', 'Module', 'Sequential', 'Conv1d',
+__all__ = ['BatchNorm1d', 'BatchNorm2d', 'Module', 'Sequential', 'Conv1d',
            'Conv2d', 'ConvTranspose2d', 'ReLU', 'Sigmoid', 'MaxPool2d',
            'AvgPool2d', 'AdaptiveAvgPool2d', 'Dropout2d', 'Linear']
 
@@ -245,77 +245,6 @@ class BatchNorm2d(Module):
             B, C, H, W = input.size()
             return batchnormeval(input.view(B, C, -1).contiguous(), self.weight, self.bias,
                                  self.running_mean, std).view(B, C, H, W)
-
-
-class BatchNorm3d(Module):
-    def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True):
-        super(BatchNorm3d, self).__init__()
-        self.num_features = num_features
-        self.affine = affine
-        self.eps = eps
-        self.momentum = momentum
-        if self.affine:
-            self.weight = Parameter(torch.Tensor(num_features))
-            self.bias = Parameter(torch.Tensor(num_features))
-        else:
-            self.register_parameter('weight', None)
-            self.register_parameter('bias', None)
-        self.register_buffer('running_mean', torch.zeros(num_features))
-        self.register_buffer('running_var', torch.ones(num_features))
-        self.reset_parameters()
-        self.writelock = threading.Lock()
-        nGPUs = torch.cuda.device_count()
-        self.xsum, self.xsquare = SharedTensor(nGPUs), SharedTensor(nGPUs)
-
-    def reset_parameters(self):
-        self.running_mean.zero_()
-        self.running_var.fill_(1)
-        if self.affine:
-            self.weight.data.uniform_()
-            self.bias.data.zero_()
-
-    def __repr__(self):
-        return ('{name}({num_features}, eps={eps}, momentum={momentum},'
-                ' affine={affine})'
-                .format(name=self.__class__.__name__, **self.__dict__))
-
-    def _check_input_dim(self, input):
-        if input.dim() != 5:
-            raise ValueError('expected 5D input (got {}D input)'
-                             .format(input.dim()))
-
-    def forward(self, input):
-        self._check_input_dim(input)
-        if self.training:
-            # push the value
-            isum, isquare = sum_square_3d(input)
-            idxs = self.xsum.push(isum)
-            idxq = self.xsquare.push(isquare)
-            xsum = self.xsum[idxs]
-            xsquare = self.xsquare[idxq]
-            # calculate N
-            N = len(self.xsum)*input.size(0)*input.size(2)*input.size(3)*input.size(4)
-            mean = xsum / N
-            sumvar = xsquare - xsum * xsum / N
-            unbias_var = sumvar / (N - 1)
-            std = (sumvar / N + self.eps).sqrt()
-            # update running_mean and var
-            self.running_mean = (1-self.momentum) * self.running_mean \
-                + self.momentum * mean.data
-            self.running_var = (1-self.momentum) * self.running_var + \
-                self.momentum * unbias_var.data
-            # forward
-            B, C, H, W, L = input.size()
-            output = batchnormtrain(
-                input.view(B, C, -1).contiguous(), self.weight,
-                self.bias, mean,
-                std)
-            return output.view(B, C, H, W, L)
-        else:
-            std = (self.running_var + self.eps).sqrt()
-            B, C, H, W, L = input.size()
-            return batchnormeval(input.view(B, C, -1).contiguous(), self.weight, self.bias,
-                                 self.running_mean, std).view(B, C, H, W, L)
 
 
 class SharedTensor(object):

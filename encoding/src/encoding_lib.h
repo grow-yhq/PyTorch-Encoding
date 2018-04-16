@@ -27,13 +27,6 @@ extern "C" {
 #include "generic/syncbn_generic.h"
 #include "THC/THCGenerateFloatType.h"
 
-// half
-#include "generic/encoding_generic.h"
-#include "THC/THCGenerateHalfType.h"
-
-#include "generic/syncbn_generic.h"
-#include "THC/THCGenerateHalfType.h"
-
 #ifdef __cplusplus
 }
 #endif
@@ -127,55 +120,6 @@ int Encoding_Double_DilatedAvgPool2d_Forward(
 
 int Encoding_Double_DilatedAvgPool2d_Backward(
     THCudaDoubleTensor *gradX_, THCudaDoubleTensor *gradY_, 
-    int kH, int kW, int dH, int dW,
-    int padH, int padW,
-    int dilationH, int dilationW);
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-
-int Encoding_Half_scaledl2_forward(THCudaHalfTensor *SL,
-    THCudaHalfTensor *X, THCudaHalfTensor *C,  THCudaHalfTensor *S);
-
-int Encoding_Half_scaledl2_backward(
-    THCudaHalfTensor *GSL, THCudaHalfTensor *GX,
-    THCudaHalfTensor *GC, THCudaHalfTensor *X,
-    THCudaHalfTensor *C, THCudaHalfTensor *S);
-
-int Encoding_Half_aggregate_forward(THCudaHalfTensor *E,
-    THCudaHalfTensor *A, THCudaHalfTensor *X, THCudaHalfTensor *C);
-
-int Encoding_Half_aggregate_backward(THCudaHalfTensor *GA,
-    THCudaHalfTensor *GE, THCudaHalfTensor *A, THCudaHalfTensor *X,
-    THCudaHalfTensor *C);
-
-int Encoding_Half_batchnorm_Forward(THCudaHalfTensor *output_,
-    THCudaHalfTensor *input_, THCudaHalfTensor *mean_,
-    THCudaHalfTensor *invstd_, THCudaHalfTensor *gamma_,
-    THCudaHalfTensor *beta_);
-
-int Encoding_Half_batchnorm_Backward(THCudaHalfTensor *gradoutput_,
-    THCudaHalfTensor *input_, THCudaHalfTensor *gradinput_,
-    THCudaHalfTensor *gradgamma_, THCudaHalfTensor *gradbeta_,
-    THCudaHalfTensor *mean_, THCudaHalfTensor *invstd_,
-    THCudaHalfTensor *gamma_, THCudaHalfTensor *beta_,
-    THCudaHalfTensor *gradMean_, THCudaHalfTensor *gradStd_,
-    int train);
-
-int Encoding_Half_sum_square_Forward(THCudaHalfTensor *input_,
-    THCudaHalfTensor *sum_, THCudaHalfTensor *square_);
-
-void Encoding_Half_sum_square_Backward(
-    THCudaHalfTensor *gradInput, THCudaHalfTensor *input_,
-    THCudaHalfTensor *gradSum_, THCudaHalfTensor *gradSquare_);
-
-int Encoding_Half_DilatedAvgPool2d_Forward(
-    THCudaHalfTensor *X_, THCudaHalfTensor *Y_,
-    int kH, int kW, int dH, int dW,
-    int padH, int padW,
-    int dilationH, int dilationW);
-
-int Encoding_Half_DilatedAvgPool2d_Backward(
-    THCudaHalfTensor *gradX_, THCudaHalfTensor *gradY_,
     int kH, int kW, int dH, int dW,
     int padH, int padW,
     int dilationH, int dilationW);

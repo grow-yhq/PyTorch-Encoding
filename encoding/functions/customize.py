@@ -46,11 +46,6 @@ class _dilatedavgpool2d(Function):
                 encoding_lib.Encoding_Double_DilatedAvgPool2d_Forward(
                     input, output, ctx.kH, ctx.kW, ctx.dH, ctx.dW, ctx.padH,
                     ctx.padW, ctx.dilationH, ctx.dilationW)
-        elif isinstance(input, torch.cuda.HalfTensor):
-            with torch.cuda.device_of(input):
-                encoding_lib.Encoding_Half_DilatedAvgPool2d_Forward(
-                    input, output, ctx.kH, ctx.kW, ctx.dH, ctx.dW, ctx.padH,
-                    ctx.padW, ctx.dilationH, ctx.dilationW)
         else:
             raise RuntimeError('Unimplemented data type!')
         return output
@@ -69,12 +64,6 @@ class _dilatedavgpool2d(Function):
         elif isinstance(input.data, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(input.data):
                 encoding_lib.Encoding_Double_DilatedAvgPool2d_Backward(
-                    gradInput.data, gradOutput.data,
-                    ctx.kH, ctx.kW, ctx.dH, ctx.dW, ctx.padH, ctx.padW,
-                    ctx.dilationH, ctx.dilationW)
-        elif isinstance(input.data, torch.cuda.HalfTensor):
-            with torch.cuda.device_of(input.data):
-                encoding_lib.Encoding_Half_DilatedAvgPool2d_Backward(
                     gradInput.data, gradOutput.data,
                     ctx.kH, ctx.kW, ctx.dH, ctx.dW, ctx.padH, ctx.padW,
                     ctx.dilationH, ctx.dilationW)

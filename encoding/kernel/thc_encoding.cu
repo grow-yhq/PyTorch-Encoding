@@ -17,9 +17,6 @@
 #include "generic/device_tensor.h"
 #include "THC/THCGenerateDoubleType.h"
 
-#include "generic/device_tensor.h"
-#include "THC/THCGenerateHalfType.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,19 +46,6 @@ extern "C" {
 
 #include "generic/pooling_kernel.c"
 #include "THC/THCGenerateDoubleType.h"
-
-// half
-#include "generic/encoding_utils.c"
-#include "THC/THCGenerateHalfType.h"
-
-#include "generic/encoding_kernel.c"
-#include "THC/THCGenerateHalfType.h"
-
-#include "generic/syncbn_kernel.c"
-#include "THC/THCGenerateHalfType.h"
-
-#include "generic/pooling_kernel.c"
-#include "THC/THCGenerateHalfType.h"
 
 #ifdef __cplusplus
 }
