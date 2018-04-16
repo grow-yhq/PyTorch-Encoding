@@ -13,7 +13,7 @@ import torch
 from torch.autograd import Function, Variable
 from .._ext import encoding_lib
 
-__all__ = ['sum_square', 'batchnormtrain', 'batchnormeval']
+__all__ = ['sum_square', 'sum_square_3d', 'batchnormtrain', 'batchnormeval']
 
 class _sum_square(Function):
     @staticmethod
