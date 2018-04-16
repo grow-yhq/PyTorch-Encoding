@@ -97,7 +97,10 @@ def dilatedavgpool2d(input, kernel_size, stride=None, padding=0,
           a tuple (padh x padw), Default: 0
         dilation: the dilation parameter similar to Conv2d
     """
+<<<<<<< HEAD
     if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
         input = input.float()
         print('dilatedavgpool2d HalfTensor')
+=======
+>>>>>>> parent of 22fd87f... complete type tansformation in function the input may be FP16
     return _dilatedavgpool2d.apply(input, kernel_size, stride, padding, dilation)

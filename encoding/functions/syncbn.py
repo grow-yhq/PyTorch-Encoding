@@ -13,7 +13,7 @@ import torch
 from torch.autograd import Function, Variable
 from .._ext import encoding_lib
 
-__all__ = ['sum_square', 'sum_square_3d', 'batchnormtrain', 'batchnormeval']
+__all__ = ['sum_square', 'batchnormtrain', 'batchnormeval']
 
 class _sum_square(Function):
     @staticmethod
@@ -61,6 +61,7 @@ def sum_square(input):
     return _sum_square.apply(input)
 
 
+<<<<<<< HEAD
 class _sum_square_3d(Function):
     @staticmethod
     def forward(ctx, input):
@@ -119,6 +120,8 @@ def sum_square_3d(input):
     return _sum_square_3d.apply(input)
 
 
+=======
+>>>>>>> parent of 22fd87f... complete type tansformation in function the input may be FP16
 class _batchnorm(Function):
     def __init__(self, training=False):
         super(_batchnorm, self).__init__()
@@ -184,9 +187,12 @@ def batchnormtrain(input, gamma, beta, mean, std):
         - Output: :math:`(N, C)` or :math:`(N, C, L)` (same shape as input)
 
     """
+<<<<<<< HEAD
     if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
         input = input.float()
         print('batchnormtrain HalfTensor')
+=======
+>>>>>>> parent of 22fd87f... complete type tansformation in function the input may be FP16
     return _batchnorm(True)(input, gamma, beta, mean, std)
 
 
@@ -196,7 +202,10 @@ def batchnormeval(input, gamma, beta, mean, std):
 
     Please see encoding.batchnormtrain_
     """
+<<<<<<< HEAD
     if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
         input = input.float()
         print('batchnormeval HalfTensor')
+=======
+>>>>>>> parent of 22fd87f... complete type tansformation in function the input may be FP16
     return _batchnorm(False)(input, gamma, beta, mean, std)
