@@ -115,6 +115,7 @@ def sum_square_3d(input):
     # transform FP16 into FP32 for computing
     if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
         input = input.float()
+        print('sum_square_3d HalfTensor')
     return _sum_square_3d.apply(input)
 
 
@@ -185,6 +186,7 @@ def batchnormtrain(input, gamma, beta, mean, std):
     """
     if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
         input = input.float()
+        print('batchnormtrain HalfTensor')
     return _batchnorm(True)(input, gamma, beta, mean, std)
 
 
@@ -196,4 +198,5 @@ def batchnormeval(input, gamma, beta, mean, std):
     """
     if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
         input = input.float()
+        print('batchnormeval HalfTensor')
     return _batchnorm(False)(input, gamma, beta, mean, std)
