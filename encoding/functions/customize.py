@@ -97,4 +97,6 @@ def dilatedavgpool2d(input, kernel_size, stride=None, padding=0,
           a tuple (padh x padw), Default: 0
         dilation: the dilation parameter similar to Conv2d
     """
+    if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
+        input = input.float()
     return _dilatedavgpool2d.apply(input, kernel_size, stride, padding, dilation)

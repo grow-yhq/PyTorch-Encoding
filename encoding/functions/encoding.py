@@ -79,6 +79,8 @@ def aggregate(A, X, C):
         >>> E = func(A, X, C)
 
     """
+    if isinstance(A, torch.cuda.HalfTensor) or isinstance(A, torch.HalfTensor):
+        A = A.float()
     return _aggregate.apply(A, X, C)
 
 class _scaledL2(Function):
@@ -136,4 +138,6 @@ def scaledL2(X, C, S):
         - Output: :math:`E\in\mathcal{R}^{B\times N\times K}`
 
     """
+    if isinstance(X, torch.cuda.HalfTensor) or isinstance(X, torch.HalfTensor):
+        X = X.float()
     return _scaledL2.apply(X, C, S)
