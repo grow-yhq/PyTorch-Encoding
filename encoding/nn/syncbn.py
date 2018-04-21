@@ -287,9 +287,9 @@ class BatchNorm3d(Module):
     def forward(self, input):
         self._check_input_dim(input)
         if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
-            print('input Half: {}', input)
+            print('input Half: {}'.format(input[1, 1, 1]))
             input = input.float()
-            print('input Float: {}', input)
+            print('input Float: {}'.format(input[1, 1, 1]))
         if self.training:
             # push the value
             isum, isquare = sum_square_3d(input)
