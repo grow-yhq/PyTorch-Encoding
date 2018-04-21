@@ -80,10 +80,6 @@ class _sum_square_3d(Function):
             with torch.cuda.device_of(input):
                 encoding_lib.Encoding_Double_sum_square_Forward(
                     input.view(B,C,-1), xsum, xsquare)
-        elif isinstance(input, torch.cuda.HalfTensor):
-            with torch.cuda.device_of(input):
-                encoding_lib.Encoding_Half_sum_square_Forward(
-                    input.view(B,C,-1), xsum, xsquare)
         else:
             raise RuntimeError('Unimplemented data type!')
         return xsum, xsquare
@@ -101,10 +97,6 @@ class _sum_square_3d(Function):
         elif isinstance(input.data, torch.cuda.DoubleTensor):
             with torch.cuda.device_of(input.data):
                 encoding_lib.Encoding_Double_sum_square_Backward(
-                    gradInput, input.data.view(B,C,-1), gradSum, gradSquare)
-        elif isinstance(input.data, torch.cuda.HalfTensor):
-            with torch.cuda.device_of(input.data):
-                encoding_lib.Encoding_Half_sum_square_Backward(
                     gradInput, input.data.view(B,C,-1), gradSum, gradSquare)
         else:
             raise RuntimeError('Unimplemented data type!')
