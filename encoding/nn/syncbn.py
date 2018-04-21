@@ -289,6 +289,7 @@ class BatchNorm3d(Module):
         if self.training:
             # push the value
             isum, isquare = sum_square_3d(input)
+            print(isum, isquare)
             idxs = self.xsum.push(isum)
             idxq = self.xsquare.push(isquare)
             xsum = self.xsum[idxs]
