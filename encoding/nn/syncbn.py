@@ -286,10 +286,12 @@ class BatchNorm3d(Module):
 
     def forward(self, input):
         self._check_input_dim(input)
+        if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
+            input = input.float()
+            print('BatchNorm3d HalfTensor')
         if self.training:
             # push the value
             isum, isquare = sum_square_3d(input)
-            print(isum, isquare)
             idxs = self.xsum.push(isum)
             idxq = self.xsquare.push(isquare)
             xsum = self.xsum[idxs]
@@ -307,6 +309,7 @@ class BatchNorm3d(Module):
                 self.momentum * unbias_var.data
             # forward
             B, C, H, W, L = input.size()
+            print("Start Batchnorm...")
             output = batchnormtrain(
                 input.view(B, C, -1).contiguous(), self.weight,
                 self.bias, mean,
