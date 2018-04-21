@@ -58,6 +58,9 @@ def sum_square(input):
     r"""
     Calculate sum of elements and sum of squares for Batch Normalization.
     """
+    # if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
+    #     input = input.float()
+    #     print('sum_square HalfTensor')
     return _sum_square.apply(input)
 
 
@@ -113,9 +116,9 @@ def sum_square_3d(input):
     Calculate sum of elements and sum of squares for Batch Normalization.
     """
     # transform FP16 into FP32 for computing
-    if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
-        input = input.float()
-        print('sum_square_3d HalfTensor')
+    # if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
+    #     input = input.float()
+    #     print('sum_square_3d HalfTensor')
     return _sum_square_3d.apply(input)
 
 
@@ -185,9 +188,9 @@ def batchnormtrain(input, gamma, beta, mean, std):
 
     """
 
-    if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
-        input = input.float()
-        print('batchnormtrain HalfTensor')
+    # if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
+    #     input = input.float()
+    #     print('batchnormtrain HalfTensor')
     return _batchnorm(True)(input, gamma, beta, mean, std)
 
 
@@ -198,7 +201,7 @@ def batchnormeval(input, gamma, beta, mean, std):
     Please see encoding.batchnormtrain_
     """
 
-    if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
-        input = input.float()
-        print('batchnormeval HalfTensor')
+    # if isinstance(input, torch.cuda.HalfTensor) or isinstance(input, torch.HalfTensor):
+    #     input = input.float()
+    #     print('batchnormeval HalfTensor')
     return _batchnorm(False)(input, gamma, beta, mean, std)

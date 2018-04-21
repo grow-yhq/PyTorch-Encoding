@@ -80,9 +80,9 @@ def aggregate(A, X, C):
 
     """
 
-    if isinstance(A, torch.cuda.HalfTensor) or isinstance(A, torch.HalfTensor):
-        A = A.float()
-        print('aggregate HalfTensor')
+    # if isinstance(A, torch.cuda.HalfTensor) or isinstance(A, torch.HalfTensor):
+    #     A = A.float()
+    #     print('aggregate HalfTensor')
     return _aggregate.apply(A, X, C)
 
 class _scaledL2(Function):
@@ -141,7 +141,7 @@ def scaledL2(X, C, S):
 
     """
 
-    if isinstance(X, torch.cuda.HalfTensor) or isinstance(X, torch.HalfTensor):
-        X = X.float()
-        print('scaledL2 HalfTensor')
+    # if isinstance(X, torch.cuda.HalfTensor) or isinstance(X, torch.HalfTensor):
+    #     X = X.float()
+    #     print('scaledL2 HalfTensor')
     return _scaledL2.apply(X, C, S)
