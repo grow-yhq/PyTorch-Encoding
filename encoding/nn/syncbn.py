@@ -193,7 +193,8 @@ class BatchNorm2d(Module):
         self.register_buffer('running_var', torch.ones(num_features))
         self.reset_parameters()
         self.writelock = threading.Lock()
-        nGPUs = torch.cuda.device_count()
+        nGPUs = torch.cuda.device_count() - 1
+        print('nGPUs : {}'.format(nGPUs))
         self.xsum, self.xsquare = SharedTensor(nGPUs), SharedTensor(nGPUs)
 
     def reset_parameters(self):
